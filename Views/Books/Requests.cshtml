@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Vidly.Models.Request>
+@using Vidly.Models;
+@{
+    //ViewBag.Title = customer.Customer.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="urdu" style="text-align:center;">کتابوں  کی  درخواست</h2>
+
+@*<li>Membership Type: @Model.Customer.MembershipType.Name</li>*@
+<div class="row">
+    <input hidden id="toastr" value=@ViewBag.Unavailable />
+    @if (Model.Count() == 0)
+    {
+        <h1 class="urdu" style="text-align:right;">٭  اس وقت کسی کتاب کی درخواست نہیں کی گئی۔</h1>
+    }
+    else
+    {
+        foreach (var customer in Model)
+        {
+            <div class=" urdu  col-md-4 well" style=" float: right !important; direction:rtl; text-align:center; font-size:larger;">
+                @if (!User.IsInRole(RoleName.CanManageMovies))
+                {
+                    <h2 class="urdu" style="text-align:center;">@customer.Book.Name</h2>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <p>درخواست  کی  تاریخ: @customer.RequestDate.ToString("MM/dd/yyyy")</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <h2 class="urdu" style="text-align:center;"><a href='/Customers/Detail/@customer.User.Id'>@customer.User.FirstName</a></h2>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <p><a href='/Books/details/@customer.Book.Id'>@Html.DisplayFor(modelItem => customer.Book.Name)</a></p>
+                        </div>
+                        <div class="col-md-12">
+                            <p>درخواست  کی  تاریخ: @customer.RequestDate.ToString("MM/dd/yyyy")</p>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            @Html.ActionLink("رد", "decline", "Books", new { requestId = customer.Id }, new { @class = "button btn btn-red", @style = "width:-webkit-fill-available;" })
+                        </div>
+                        <div class="col-md-6 text-center">
+                            @Html.ActionLink("قبول", "accept", "Books", new { requestId = customer.Id }, new { @class = "button btn btn-green", @style = "width:-webkit-fill-available;" })
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+<p>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+        <i class="fa fa-arrow-left"></i>
+    </a>
+</p>
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+            $('html, body').animate({
+                'scrollTop': "110"
+            }, 1500);
+
+
+            if ($("#toastr").val() == "Unavailable") {
+
+                toastr.options = {
+                "debug": false,
+                "positionClass": "toast-top-full-width",
+                "onclick": null,
+                "fadeIn": 300,
+                "fadeOut": 100,
+                "timeOut": 3000,
+                "extendedTimeOut": 1000
+            };
+        
+            var d= "This book is not available anymore.";
+            toastr["error"](d,"Unavailable");
+        }
+        });
+    </script>
+
+}

@@ -1,0 +1,47 @@
+﻿@model Vidly.Models.Rental
+
+@{
+    //ViewBag.Title = customer.Customer.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="urdu" style="text-align:center;" >@Model.User.FirstName</h2>
+
+@*<li>Membership Type: @Model.Customer.MembershipType.Name</li>*@
+
+
+    @*if (customer.Customer.Birthdate.HasValue)
+        {
+        <li>Birthdate: @customer.Customer.Birthdate.Value.ToShortDateString()</li>
+        }*@
+
+
+<div class="row">
+
+    <div class=" urdu  col-md-6 col-md-offset-3 well" style="direction:rtl; text-align:center; font-size:larger;">
+        <h2 class="urdu" style="text-align:center;">@Model.Movie.Name</h2>
+        <div class="form-group">
+            <div class="col-md-12">
+                <p><b>کتاب  نمبر: @Model.Movie.Id</b></p>
+            </div>
+            <div class="col-md-6">
+                <p>واپسی  کی  تاریخ: @Model.DateReturned.ToString("MM/dd/yyyy")</p>
+            </div>
+            <div class="col-md-6">
+                <p>ادھار  کی  تاریخ: @Model.DateRented.ToString("MM/dd/yyyy")</p>
+            </div>
+            <div class="col-md-12">
+                <p>ادھار  کی  مدّت: @TempData["Difference"] دن</p>
+            </div>
+
+            @*@if (TempData["Price"] != null)
+            {
+                <div class="col-md-6">
+                    <p>Fine for delay: @TempData["Price"]</p>
+                </div>
+            }*@
+        </div>
+    </div>
+
+</div>
+

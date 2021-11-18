@@ -1,0 +1,276 @@
+﻿@model PagedList.IPagedList<Vidly.Models.Book>
+@using PagedList.Mvc;
+@using System.Web.Mvc;
+@using Vidly.Models;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+@{
+    ViewBag.Title = "Books";
+}
+<style>
+    @@media screen and (max-width: 760px) {
+    .title_message {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+  }
+}
+</style>
+
+<div id="wrap">
+    <div class="container">
+        @if (!User.IsInRole(RoleName.CanManageMovies))
+        {
+            <input type="hidden" id="myValue" value="Yes">
+            <div class="jumbotron" style="text-align:center; background:#253852; color:white;">
+                <h1 class="urdu">فقہ  اکیڈمی  لائبریری</h1>
+                @*<p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+                <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>*@
+            </div>
+        }
+        else
+        {
+            <input type="hidden" id="myValue" value="No">
+            <h2 class="urdu" style="text-align:center;">کتابیں</h2>
+        }
+
+        @if (User.IsInRole(RoleName.CanManageMovies))
+        {
+            <p dir=rtl>
+                @Html.ActionLink("نئ  کتاب", "New", "Books", null, new { @class = "btn btn-primary" })
+            </p>
+        }
+        @using (Html.BeginForm("Index", "Books", FormMethod.Post, new { @class = "urdu" }))
+        {
+            <p style="direction:rtl;">
+                <div class="title_message">
+                    <div id="bookId" class="tt-container col-sm-3 col-xs-12" style="float:right; display:none;">
+                        <input type="number" min="1" class="form-control" id="BooksTextbox" name="bookId" placeholder="کتاب  کا  نمبر" />
+                    </div>
+                    <div id="bookName" class="tt-container col-sm-3 col-xs-12" style="float:right;">
+                        <select class="form-control" data-rule-validCustomer="true" required id="BooksDropdown" name="bookName"></select>
+                    </div>
+                    <div id="bookAuthor" class="tt-container col-sm-3 col-xs-12" style="float:right;">
+                        <select class="form-control" data-rule-validCustomer="true" required id="AuthorsDropdown" name="bookAuthor"></select>
+                    </div>
+                    <div id="bookTopic" class="tt-container col-sm-3 col-xs-12" style="float:right;">
+                        <select class="form-control" data-rule-validCustomer="true" required id="TopicsDropdown" name="bookTopic"></select>
+                    </div>
+                    <div class="tt-container col-sm-3 col-xs-12" style="float:right;">
+                        <input class="btn btn-primary form-control" type="submit" value="تلاش" />
+                    </div>
+                </div>
+                @*<div class="col-md-3" style="float:right;">
+                    @Html.TextBox("bookName", ViewBag.currentBook as string, new { @class = "input-sm form-control", style = "direction: rtl; font-size: 18px;", placeholder = "کتاب  کا  نام  یا  نمبر" })
+                </div>
+                <div class="col-md-3" style="float:right;">
+                    @Html.TextBox("bookAuthor", ViewBag.currentAuthor as string, new { @class = "input-sm form-control", style = "direction: rtl; font-size: 18px;", placeholder = "مصنف" })
+                </div>
+                <div class="col-md-3" style="float:right;">
+
+                    @Html.DropDownList("bookTopic", new SelectList(ViewBag.Genre, "Id", "Name"), "موضوع", new { @class = "input-sm form-control", style = "direction: rtl; font-size: 18px; height: 41px;" })
+
+                </div>*@
+                @*<div class="col-md-3">
+                    <select required class=" input-sm form-control" style="direction: rtl; font-size: 18px; height: 41px;" name="listType">
+                        <option selected="true" disabled="true" value="">@ViewBag.display</option>
+                        <option value=Available>موجودہ  کتابوں  کی  فہرست</option>
+                        <option value=All>تمام  کتابوں  کی  فہرست</option>
+                    </select>
+                </div>*@
+            </p>
+            <a id="searchId" class="tt-container col-md-3 title_message" style="float:right;  cursor:pointer; direction:rtl;">یا  نمبر  سے  تلاش  کریں</a>
+            @*<p hidden>@ViewBag.listType </p>
+            <br />
+            <br />
+
+            <div class="col-md-12 text-center">
+                <input class="btn btn-primary form-control" type="submit" value="تلاش" />
+            </div>*@
+            <br />
+            <br />
+        }
+        @if (Model.Count() == 0)
+        {
+            <h3 class="urdu" style="text-align:center;">معذرت،  کتاب  موجود  نہیں  ہے۔</h3>
+        }
+        else
+        {
+            <table style="margin-top: 20px;" id="Books" cellpadding="0" cellspacing="0" border="0" class=" urdu datatable table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        @*<th>
+                            @Html.DisplayNameFor(model => model.NumberAvailable)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.NumberInStock)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Topic)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Author)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </th>*@
+                        @*<th style="text-align:center;">Number Available</th>
+                        <th style="text-align:center;">Number In Stock</th>*@
+                        @if (User.IsInRole(RoleName.CanManageMovies))
+                        {
+                            <th></th>
+                        }
+                        <th style="text-align:center; font-size: larger;">موضوع</th>
+                        <th style="text-align:center; font-size: larger;">مصنف</th>
+                        <th style="text-align:center; font-size: larger;">نام</th>
+                    </tr>
+                </thead>
+                <tbody style="text-align:end;">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="gradeX">
+                            @*<td>
+                                @Html.DisplayFor(modelItem => item.NumberAvailable, new { style = "text-align:centre;" })
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NumberInStock, new { dir = "rtl"})
+                            </td>*@
+                            @if (User.IsInRole(RoleName.CanManageMovies))
+                            {
+                                <td style="text-align:center;">
+                                    <button class='btn-link js-delete' data-movie-id=@item.Id>ڈلیٹ</button> | <a href='/Books/edit/@item.Id'>تبدیل</a>
+                                </td>
+                            }
+                            <td>
+                                <a href='/Books/Topic/@item.GenreId'> @Html.DisplayFor(modelItem => item.Genre.Name, new { dir = "rtl" })</a>
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Author)
+                            </td>
+                            <td>
+                                @if (item.NumberAvailable > 0)
+                                {
+                                    <a href='/Books/details/@item.Id'>@Html.DisplayFor(modelItem => item.Name)</a>
+                                }
+                                else
+                                {
+                                    <a style="color:red;" href='/Books/details/@item.Id'>@Html.DisplayFor(modelItem => item.Name)</a>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+            <br />
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+            @Html.PagedListPager(Model, page => Url.Action("Index",
+                new { page, sortOrder = ViewBag.CurrentSort, currentBook = ViewBag.currentBook, currentAuthor = ViewBag.currentAuthor, currentTopic = ViewBag.currentTopic, currentList = ViewBag.listType }))
+        </div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js"></script>
+<script src="js/datatables/datatables.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if (document.getElementById("myValue").value === "Yes") {
+            $('html, body').animate({
+                    'scrollTop': "200"
+                }, 1500);
+        }
+
+        var searchId = document.getElementById('searchId');
+        searchId.onclick = showId;
+
+
+        function showId() {
+            $("#bookName").toggle();
+            $("#bookAuthor").toggle();
+            $("#bookTopic").toggle();
+            $("#bookId").toggle();
+            if($('#bookName').is(':visible')){
+                  $("#searchId").text("یا  نمبر  سے  تلاش  کریں");
+            }else{
+                  $("#searchId").text("یا  نام  سے  تلاش  کریں");
+            }
+            
+        }
+
+        $.ajax({  
+           type: "GET",  
+           url: "/Books/getAllBooks",  
+           data: "{}",  
+           success: function (data) {  
+               var s = '<option value="-1">کتاب  کا  نام</option>';  
+               for (var i = 0; i < data.length; i++) {  
+                   s += '<option value="' + data[i].DepartmentName + '">' + data[i].DepartmentName + '</option>';  
+               }  
+               $("#BooksDropdown").html(s);
+               $("#BooksDropdown").chosen({})
+           }  
+        });
+        $.ajax({  
+           type: "GET",  
+           url: "/Books/getAuthors",  
+           data: "{}",  
+           success: function (data) {  
+               var s = '<option value="-1">مصنف  کا  نام</option>';  
+               for (var i = 0; i < data.length; i++) {  
+                   s += '<option value="' + data[i].DepartmentName + '">' + data[i].DepartmentName + '</option>';  
+               }  
+               $("#AuthorsDropdown").html(s);
+               $("#AuthorsDropdown").chosen({})
+           }  
+        });
+        $.ajax({  
+           type: "GET",  
+           url: "/Books/getTopics",  
+           data: "{}",  
+           success: function (data) {  
+               var s = '<option value="-1">موضوع</option>';  
+               for (var i = 0; i < data.length; i++) {  
+                   s += '<option value="' + data[i].DepartmentID + '">' + data[i].DepartmentName + '</option>';  
+               }  
+               $("#TopicsDropdown").html(s);
+               $("#TopicsDropdown").chosen({})
+           }  
+       });
+
+
+
+
+
+
+        $("#Books").on("click", ".js-delete", function () {
+            var button = $(this);
+
+            bootbox.confirm("Are you sure you want to delete this book?", function (result) {
+                if (result) {
+                    $.ajax({
+                        url: "/api/books/" + button.attr("data-movie-id"),
+                        method: "DELETE",
+                        success: function () {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+

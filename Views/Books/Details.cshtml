@@ -1,0 +1,134 @@
+﻿@model Vidly.Models.Book
+@using Vidly.Models
+
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2 class="urdu" style="text-align:center;">کتاب  کی  تفصیلات</h2>
+<div class="row">
+
+    <div class=" urdu  col-md-6 col-md-offset-3 well" style="direction:rtl; text-align:center; font-size:larger;">
+        <h2 class="urdu" style="text-align:center;">@Model.Name</h2>
+        <div class="form-group">
+            <div class="col-md-12">
+                <p><b>کتاب  نمبر: @Model.Id</b></p>
+            </div>
+            <div class="col-md-6" style="float: right !important;">
+                <p><b>ریک:  </b>@Model.Rack</p>
+            </div>
+            <div class=" col-md-6" style="float: right !important;">
+                <p><b>کولم:  </b>@Model.Column</p>
+            </div>
+
+            @if (!String.IsNullOrEmpty(Model.Translator))
+            {
+                <div class="col-md-6" style="float: right !important;">
+                    <p><b>مترجم:  </b>@Model.Translator</p>
+                </div>
+            }
+            <div class="col-md-6" style="float: right !important;">
+                <p><b>مصنف: </b>@Model.Author</p>
+            </div>
+            <div class="col-md-6" style="float: right !important;">
+                <p><b>موضوع: </b>@Model.Genre.Name</p>
+            </div>
+
+            @if (!String.IsNullOrEmpty(Model.Publisher))
+            {
+                <div class="col-md-6" style="float: right !important;">
+                    <p><b>مکتبہ:  </b>@Model.Publisher</p>
+                </div>
+            }
+            @if (Model.Set.HasValue)
+            {
+                <div class="col-md-6" style="float: right !important;">
+                    <p><b>جلدیں:  </b>@Model.Set</p>
+                </div>
+            }
+            <div class="col-md-6" style="float: right !important;">
+                <p><b>کل  تعداد: </b>@Model.NumberInStock</p>
+            </div>
+            <div class="col-md-6" style="float: right !important;">
+                <p><b>موجود  کتابیں: </b>@Model.NumberAvailable</p>
+            </div>
+
+
+            @if (Model.Edition.HasValue)
+            {
+                <div class="col-md-6" style="float: right !important;">
+                    <p><b>ایڈیشن:  </b>@Model.Edition</p>
+                </div>
+            }
+            <div class="col-md-6" style="float: right !important;">
+                <p><b>تاریخ: </b>@Model.DateAdded.ToString("MM/dd/yyyy")</p>
+            </div>
+            @if (Model.Price.HasValue)
+            {
+                <div class="col-md-6" style="float: right !important;">
+                    <p><b>قیمت:  </b>@Model.Price</p>
+                </div>
+            }
+
+            @if (Model.NumberAvailable > 0 && !User.IsInRole(RoleName.CanManageMovies) && User.Identity.IsAuthenticated)
+            {
+                <div class="col-md-12 text-center">
+                    <button id="request" onclick="myFunction()" class='btn btn-primary form-control js-delete' value=@Model.Id>درخواست</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<p>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+        <i class="fa fa-arrow-left"></i>
+    </a>
+</p>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js"></script>
+<script src="js/datatables/datatables.js"></script>
+<script>
+    function myFunction() {
+        var button = $(this);
+        var vm = {
+            movieIds: []
+        };
+        vm.movieIds.push(document.getElementById("request").value);
+        bootbox.confirm("کیا  آپ  درخواست  بھیجنا  چاہتے  ہیں؟", function (result) {
+            if (result) {
+                $.ajax({
+                    url: "/api/newRentals",
+                    method: "POST",
+                    data: vm,
+                    success: function () {
+                        toastr.success("درخواست  بھیج  دی  گئی۔");
+                    }
+                });
+            }
+        });
+    }
+    $(document).ready(function () {
+
+        $('html, body').animate({
+            'scrollTop': "30"
+        }, 1500);
+
+        //کیا  آپ  اس  کتاب  کی  درخواست  بھیجنا  چاہتے  ہیں؟
+        //$(".js-delete").on("click", ".js-delete", function () {
+        //    var button = $(this);
+
+        //    bootbox.confirm("Are you sure you want to request this book?", function (result) {
+        //        if (result) {
+        //            $.ajax({
+        //                url: "/api/newRentals" + button.attr("data-movie-id"),
+        //                method: "POST",
+        //                success: function () {
+        //                    location.reload();
+        //                }
+        //            });
+        //        }
+        //    });
+        //});
+    });
+</script>

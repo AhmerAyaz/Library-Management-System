@@ -1,0 +1,110 @@
+﻿@using Vidly.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/font-awesome.css" rel="stylesheet"/>
+    <link href="~/Content/bootstrap-chosen.css" rel="stylesheet" />
+
+</head>
+<body>
+    <input hidden id="myText" value="@User.Identity.Name">
+    @Html.Partial("_NavBar")
+    @Scripts.Render("~/bundles/lib")
+    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/chosen.jquery.js"></script>
+    <div class="container body-content">
+        @RenderBody()
+        @*<hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - Library</p>
+            </footer>*@
+    </div>
+
+
+
+    <script type="text/x-template" id="notifications-template">
+        <ul class="notifications">
+            <%
+            _.each(notifications, function(notification) {
+            if(notification.type == 1) { %>
+            <li class="urdu" style="font-size:x-large; text-align:end; color:green;">کتاب  "<%= notification.book %>"  کے  لیے  آپ  کی  درخواست  قبول  ہوگئی  ہے۔</li>
+            <% }
+
+            else if(notification.type == 2) {%>
+            <li class="urdu" style="font-size:x-large; text-align:end; color:darkred; ">کتاب  "<%= notification.book %>"  کے  لیے  آپ  کی  درخواست  رد  ہوگئی  ہے۔</li>
+            <%
+            }
+            })
+            %>
+        </ul>
+    </script>
+    <script type="text/x-template" id="notifications-old-template">
+        <ul class="notifications">
+            <%
+            _.each(notifications, function(notification) {
+            if(notification.type == 1) { %>
+            <li class="urdu" style="font-size:x-large; text-align:end;">کتاب  "<%= notification.book %>"  کے  لیے  آپ  کی  درخواست  قبول  ہوگئی  ہے۔</li>
+            <% }
+
+            else if(notification.type == 2) {%>
+            <li class="urdu" style="font-size:x-large; text-align:end;">کتاب  "<%= notification.book %>"  کے  لیے  آپ  کی  درخواست  رد  ہوگئی  ہے۔</li>
+            <%
+            }
+            })
+            %>
+        </ul>
+    </script>
+    <script>
+        $(document).ready(function () {
+
+
+            $.getJSON("/api/requests", function (notifications) {
+                if (notifications.newNotifications == undefined) {
+                    $(".notifications").popover({
+                        html: true,
+                        title: "Notifications",
+                        content: function () {
+                            var compiled = _.template($("#notifications-old-template").html());
+                            return compiled({ notifications: notifications.oldNotifications });
+                        },
+                        placement: "bottom"
+                    });
+
+                    return;
+
+                };
+
+                console.log(notifications.newNotifications.length);
+                $(".js-notifications-count")
+                    .text(notifications.newNotifications.length)
+                    .removeClass("hide");
+
+                $(".notifications").popover({
+                    html: true,
+                    title: "Notifications",
+                    content: function () {
+                        var compiled = _.template($("#notifications-template").html());
+                        return compiled({ notifications: notifications.newNotifications });
+                    },
+                    placement: "bottom"
+                }).on("shown.bs.popover", function () {
+                    $.post("/api/requests/markAsRead")
+                        .done(function () {
+                            $(".js-notifications-count")
+                                .text("")
+                                .addClass("hide");
+                        });
+
+                });
+            });
+
+
+        });
+    </script>
+</body>
+</html>

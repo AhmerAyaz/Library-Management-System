@@ -1,0 +1,68 @@
+﻿@using Vidly.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "لاگ  ان";
+}
+
+<h2 style="direction:rtl;">@ViewBag.Title</h2>
+<div class="row" style="direction:rtl;">
+    <div class="col-md-12">
+        <section id="loginForm">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <h4 style="direction:rtl;">اپنے  اکاونٹ  سے  لاگ  ان  کریں۔</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" , dir = "ltr"})
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger", dir = "ltr" })
+                    </div>
+                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", dir = "ltr" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", dir = "ltr" })
+                    </div>
+                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="checkbox">
+                            @Html.LabelFor(m => m.RememberMe)
+                            @Html.CheckBoxFor(m => m.RememberMe)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                        <input type="submit" value="لاگ  ان" class="btn btn-default" />
+                    </div>
+                </div>
+                <p>
+                    @Html.ActionLink("رجسٹر  کریں", "Register")
+                </p>
+                @* Enable this once you have account confirmation enabled for password reset functionality
+                    <p>
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                    </p>*@
+            }
+        </section>
+    </div>
+    @*<div class="col-md-4">
+        <section id="socialLoginForm">
+            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+        </section>
+    </div>*@
+</div>
+<p>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+        <i class="fa fa-arrow-left"></i>
+    </a>
+</p>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
